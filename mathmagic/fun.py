@@ -13,8 +13,7 @@ This module provides a set of very useful functions, including nonstandard
 random number generators and special plotting functions.
 """
 
-# Most of these functions rely on mathematical tools in numpy
-import scipy.io as io
+# Import numpy
 import numpy as np
 import pdb
 
@@ -216,6 +215,37 @@ def detrend(x, mean_abs_norm=1.):
                 
     return x
 
+def entropy(P):
+    """ Calculate the entropy of a discrete probability distribution.
+    
+    Args:
+        P: Array of probabilities. Arbitrary dimensionality accepted.
+    
+    Returns:
+        Entropy of distribution.
+        
+    Example:
+        >>> P1 = np.array([.2,.2,.2,.2])
+        >>> P2 = np.array([.1,.1,.4,.4])
+        >>> entropy(P1)
+        1.3862943611198906
+        >>> entropy(P2)
+        1.1935496040981333
+        
+    """
+    # Reshape distribution into 1D array
+    P = P.reshape((P.size,)).astype(float)
+    # Normalize distribution
+    P /= np.sum(P)
+    # Calculate probability times log probability
+    P_log_P = P*np.log(P)
+    # Set nans/infs to 0
+    P_log_P[np.isnan(P_log_P) + np.isinf(P_log_P)] = 0.
+    # Calculate entropy
+    ent = -np.sum(P_log_P)
+    
+    return ent
+    
 def nans(shape):
     """ Create an array of nans.
     
