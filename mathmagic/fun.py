@@ -215,6 +215,29 @@ def detrend(x, mean_abs_norm=1.):
                 
     return x
 
+def pos_inv(x):
+    """Calculate 1/x for positive x, returning np.inf for elements of x equal 
+    to zero.
+    
+    Args:
+        x: Array of non-negative floats.
+    
+    Returns:
+        1/x, with 1/0 replaced by np.inf
+    """
+    # Set to floats
+    x = x.astype(float)
+    
+    # Make return array of same shape as x
+    y = np.empty(x.shape,dtype=float)
+    
+    # Set x's zero elements to np.inf
+    y[x == 0] = np.inf
+    # Set other elements to 1/x
+    y[x != 0] = 1./x[x != 0]
+    
+    return y
+    
 def entropy(P):
     """ Calculate the entropy of a discrete probability distribution.
     
@@ -238,7 +261,8 @@ def entropy(P):
     # Normalize distribution
     P /= np.sum(P)
     # Calculate probability times log probability
-    P_log_P = P*np.log(P)
+    P_log_P = np.zeros(P.shape)
+    P_log_P[P != 0] = P[P != 0]*np.log(P[P != 0])
     # Set nans/infs to 0
     P_log_P[np.isnan(P_log_P) + np.isinf(P_log_P)] = 0.
     # Calculate entropy
