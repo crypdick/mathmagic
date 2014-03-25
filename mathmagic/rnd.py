@@ -19,7 +19,7 @@ import numpy as np
 import pdb
 
 # Random number/vector/matrix generators
-def catrnd(pr_dis,shape=np.array([1])):
+def catrnd(pr_dis,shape=(1,)):
     """Return several samples from a categorical probability distribution
     
     catrnd returns several random numbers from a categorical probability 
@@ -38,7 +38,7 @@ def catrnd(pr_dis,shape=np.array([1])):
     
     Example:
         >>> pr_dis = np.array([.2, .2, .3, .3])
-        >>> catrnd(pr_dis,np.array([2,2]))
+        >>> catrnd(pr_dis,(2,2))
         array([[0, 1],
                [2, 2])
     """
