@@ -10,7 +10,6 @@ import matplotlib.pylab as plt
 import numpy as np
 
 import mathmagic.rnd as rnd
-from mpl_toolkits.mplot3d import Axes3D
 
 def heat_scatter_3D(X,num_pts=500):
     """Create a 3D heat map using sparsely scattered points.
@@ -65,3 +64,5 @@ def heat_scatter_3D(X,num_pts=500):
     ax.set_xlim(0,xs[0])
     ax.set_ylim(0,xs[1])
     ax.set_zlim(0,xs[2])
+    
+    return ax
