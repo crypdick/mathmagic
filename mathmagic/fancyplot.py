@@ -7,11 +7,13 @@ Code for various fancy styles of plots
 """
 
 import matplotlib.pylab as plt
+from mpl_toolkits.mplot3d import Axes3D
+
 import numpy as np
 
 import mathmagic.rnd as rnd
 
-def heat_scatter_3D(X,num_pts=500):
+def heat_scatter_3D(ax,X,num_pts=500):
     """Create a 3D heat map using sparsely scattered points.
     
     heat_scatter_3D samples an element and its index from X with a probability
@@ -19,6 +21,8 @@ def heat_scatter_3D(X,num_pts=500):
     matplotlib's scatter function, colored according to its value.
     
     Args:
+        ax: Handle of axes to work with.
+        
         X: 3D numpy array whose elements represent "temperatures".
     
         num_pts: how many points to plot
@@ -28,6 +32,9 @@ def heat_scatter_3D(X,num_pts=500):
         >>> X = exp(-(x**2-y**2-z**2)/6)
     """
     
+    if np.max(X) == 0.:
+        return ax
+        
     # Create probability distribution by normalizing X
     P = X / np.sum(X)
     
@@ -56,8 +63,6 @@ def heat_scatter_3D(X,num_pts=500):
         coords[sample_idx,:] = [x_coor,y_coor,z_coor]
         heat_vals[sample_idx] = X[x_coor,y_coor,z_coor]
         
-    # Scatter plot everything
-    ax = plt.gcf().add_subplot(111, projection='3d')
     ax.scatter(coords[:,0],coords[:,1],coords[:,2],c=heat_vals)
     
     # Set limits

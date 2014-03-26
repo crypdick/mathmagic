@@ -112,6 +112,15 @@ def statdist(tr_mat):
     statdistvec = np.real(statdistvec/np.sum(statdistvec))
     return statdistvec
     
+def log(x):
+    """Calculates logarithm, returning -inf for zero-valued elements.
+    
+    """
+    y = np.empty(x.shape)
+    y[x == 0] = -np.inf
+    y[x > 0] = np.log(x[x > 0])
+    return y
+    
 def logsum(logx):
     """Efficiently calculates the logarithm of a sum from the logarithm of its
     terms.
@@ -139,14 +148,12 @@ def logsum(logx):
         >>> logsum(logx)
         1002.4076059644444
     """   
-    # Sort elements of logx from highest to lowest
-    logx = np.sort(logx)[::-1]
     # Get largest element
-    maxlogx = logx[0]
+    maxlogx = np.max(logx)
     # Normalize logx by subtracting maxlogx
-    logx -= maxlogx
+    logx_new = logx - maxlogx
     # Calculate sum of logarithms
-    logS = maxlogx + np.log(np.sum(np.exp(logx)))
+    logS = maxlogx + np.log(np.sum(np.exp(logx_new)))
     return logS
         
 def detrend(x, mean_abs_norm=1.):
