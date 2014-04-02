@@ -1,5 +1,5 @@
 #!/anaconda/bin/python
-
+import pdb
 """
 Modified Jan 31 2013
 Modified Jan 7 2013
@@ -16,7 +16,8 @@ random number generators and special plotting functions.
 # Most of these functions rely on mathematical tools in numpy
 import scipy.io as io
 import numpy as np
-import pdb
+
+import mathmagic.fun as mmf
 
 def logmvnpdf(x, mu, K, logdetK=None, opt1='standard'):
     """Calculate the log multivariate normal probability density at x.
@@ -116,10 +117,10 @@ def logmvnpdf(x, mu, K, logdetK=None, opt1='standard'):
         # Have multiple covariance matrices been supplied?
         if len(K.shape) == 3:
             # Calculate inverses
-            Kinv = mwfun(np.linalg.inv,K)
+            Kinv = mmf.mwfun(np.linalg.inv,K)
             # Calculate log determinants
             if logdetK is None:
-                logdetK = np.log(mwfun(np.linalg.det,K))
+                logdetK = np.log(mmf.mwfun(np.linalg.det,K))
         else:
             # Calculate inverse
             Kinv = np.linalg.inv(K)
@@ -133,7 +134,7 @@ def logmvnpdf(x, mu, K, logdetK=None, opt1='standard'):
             # Multiple covariance matrices?
             if len(K.shape) == 3:
                 K = mwfun(np.linalg.inv,Kinv)
-                detK = mwfun(np.linalg.det,K)
+                detK = mmf.mwfun(np.linalg.det,K)
             else:
                 K = np.linalg.inv(K)
                 detK = np.det(K)
@@ -146,8 +147,8 @@ def logmvnpdf(x, mu, K, logdetK=None, opt1='standard'):
         temp1 = np.dot(z,Kinv)
         mat_prod = np.dot(temp1,z)
     else:
-        temp1 = mwfun(np.dot,z,Kinv)
-        mat_prod = mwfun(np.dot,temp1,z)
+        temp1 = mmf.mwfun(np.dot,z,Kinv)
+        mat_prod = mmf.mwfun(np.dot,temp1,z)
 
     # Get dimension of system
     if len(z.shape) > 1:

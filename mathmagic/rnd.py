@@ -43,11 +43,11 @@ def catrnd(pr_dis,shape=(1,)):
                [2, 2])
     """
     # Convert distribution to floating point numbers
-    pr_dis = pr_dis.astype(float)
+    pr_dis_float = pr_dis.astype(float)
     # Normalize probability distribution
-    pr_dis = pr_dis/np.sum(pr_dis)
+    pr_dis_float /= np.sum(pr_dis_float)
     # Get cumulative distribution
-    cum_dis = pr_dis.cumsum()
+    cum_dis = pr_dis_float.cumsum()
     
     # Get total number of samples
     num_samples = np.prod(list(shape))
@@ -62,6 +62,11 @@ def catrnd(pr_dis,shape=(1,)):
     sample_vec = np.sum(rand_mat > cum_dis_mat,1)
     # Reshape sample vector into desired array
     sample_array = sample_vec.reshape(shape)
+    
+    # Just one number desired?
+    if shape == (1,):
+        sample_array = sample_array[0]
+        
     return sample_array
     
 def wishrnd(scale_mat=np.eye(2),deg_freedom=2):
