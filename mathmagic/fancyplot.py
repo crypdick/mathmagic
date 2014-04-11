@@ -71,3 +71,4 @@ def heat_scatter_3D(ax,X,num_pts=500):
     ax.set_zlim(0,xs[2])
     
     return ax
+    

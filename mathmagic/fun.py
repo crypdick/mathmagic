@@ -276,7 +276,29 @@ def entropy(P):
     ent = -np.sum(P_log_P)
     
     return ent
+
+def prob_from_log_like(log_like):
+    """ Calculate probability from log_likelihoods.
+
+    This is useful when log_likelihoods are not well-behaved, as it uses an
+    efficient algorithm for calculating the logarithm of a sum from the 
+    logarithms of its terms without raising numerical errors.
     
+    Args:
+        log_like: Array of log-likelihoods for all source positions.
+        
+    Returns:
+        Probability of source at all possible positions.
+    """
+    # Calculate log[normalization factor] (log of summed likelihood)
+    log_norm_factor = logsum(log_like.reshape(-1))
+    # Calculate log of source probability
+    log_prob = log_like - log_norm_factor
+    # Calculate source probability
+    prob = np.exp(log_prob)
+    
+    return prob
+
 def nans(shape):
     """ Create an array of nans.
     
