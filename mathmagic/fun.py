@@ -278,7 +278,7 @@ def entropy(P):
     return ent
 
 def prob_from_log_like(log_like):
-    """ Calculate probability from log_likelihoods.
+    """ Calculate probability from log_likelihoods, assuming flat prior.
 
     This is useful when log_likelihoods are not well-behaved, as it uses an
     efficient algorithm for calculating the logarithm of a sum from the 
@@ -300,7 +300,7 @@ def prob_from_log_like(log_like):
     return prob
 
 def nans(shape):
-    """ Create an array of nans.
+    """Create an array of nans.
     
     Useful for allocating space for a matrix.
     
@@ -320,6 +320,23 @@ def nans(shape):
     x = np.empty(shape,dtype=float)
     x[:] = np.nan
     return x
+    
+def float_mat_double(mat,axis=0):
+    """Double the size of a floating-point matrix.
+    
+    Original elements are left unchanged. Nans are added. 
+    
+    Args:
+        mat: Matrix to double size of.
+        
+        axis: Which axis to expand matrix along.
+        
+    Returns:
+        mat: Matrix expanded to have double the size.
+        
+    """
+    mat = np.concatenate([mat,nans(mat.shape)],axis)
+    return mat
     
 def symtri(x,center=0,height=1,slope=1):
     """ Symmetric triangle function.
