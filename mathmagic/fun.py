@@ -321,8 +321,8 @@ def nans(shape):
     x[:] = np.nan
     return x
     
-def float_mat_double(mat,axis=0):
-    """Double the size of a floating-point matrix.
+def nan_extend(mat,axis=0):
+    """Double the size of a floating-point matrix using nans.
     
     Original elements are left unchanged. Nans are added. 
     
@@ -339,7 +339,7 @@ def float_mat_double(mat,axis=0):
     return mat
     
 def symtri(x,center=0,height=1,slope=1):
-    """ Symmetric triangle function.
+    """Symmetric triangle function.
     
     Returns the value of a symmetric trianglel function evaluated at x. This is
     zero if x is less than the intersection of the left arm of the triangle
@@ -359,4 +359,31 @@ def symtri(x,center=0,height=1,slope=1):
     elif x <= x_right and x >= center:
         return (x_right - x)*slope
         
+def cartesian_product(x,y=None):
+    """Return Cartesian product of two 1D arrays.
     
+    Args:
+        x: One array.
+        
+        y: The other array. Leave as blank to use x twice.
+        
+    Returns:
+        Cartesian product of x and y.
+        
+    Example:
+        >>> x = np.array([1,3,5])
+        >>> y = np.array([2,4,6])
+        >>> cartesian_product(x,y)
+        array([[1, 2],
+               [3, 2],
+               [5, 2],
+               [1, 4],
+               [3, 4],
+               [5, 4],
+               [1, 6],
+               [3, 6],
+               [5, 6]])
+    """
+    if y is None:
+        y = x.copy()
+    return np.dstack(np.meshgrid(x,y)).reshape(-1,2)

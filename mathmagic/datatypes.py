@@ -68,6 +68,7 @@ class Space():
             return idx
         else:
             return tuple([self.sparse[ii][idx[ii]] for ii in range(self.dim)])
+    
             
 class ParArray():
     """Parametric array data type.
