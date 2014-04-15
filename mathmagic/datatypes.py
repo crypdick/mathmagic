@@ -108,7 +108,9 @@ class ParArray():
                 X = [np.arange(N) for N in Y.shape]
             self.X = X
             self.dV = np.prod([self.X[ii][1] - self.X[ii][0] \
-                for ii in range(self.D)])
+                for ii in range(D)])
+            self.size = Y.size
+            self.shape = Y.shape
         self.D = D
         
     def arr(self,X=None):
@@ -161,7 +163,7 @@ class ParArray():
             
         """
         if not (q.is_par() or self.is_par()):
-            self.Y -= q.arr
+            self.Y -= q.arr()
         else:
             pass
         
