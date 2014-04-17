@@ -387,3 +387,35 @@ def cartesian_product(x,y=None):
     if y is None:
         y = x.copy()
     return np.dstack(np.meshgrid(x,y)).reshape(-1,2)
+    
+def mat_prod(mat_list):
+    """Calculate the product of several matrices.
+    
+    Matrices are given as numpy arrays. One dimensional arrays are treated as
+    column vectors.
+    
+    Args:
+        mat_list: List of numpy arrays, in the order that they are to be
+        multiplied.
+        
+    Returns:
+        Matrix product of all matrices in mat_list.
+        
+    Example:
+        >>> X1 = np.array([[2,3],[1,2]])
+        >>> X2 = np.array([[6,1],[-3,2]])
+        >>> X3 = np.array([[-5,-5],[2,6]],dtype=float)
+        >>> mat_prod([X1,X2,X3])
+        array([[  1.,  33.],
+               [ 10.,  30.]])
+        >>> np.dot(X1,np.dot(X2,X3))
+        array([[  1.,  33.],
+               [ 10.,  30.]])
+    """
+    Y = np.eye(mat_list[-1].shape[1])
+    for mat in mat_list[::-1]:
+        if len(mat.shape) == 1:
+            mat = mat.reshape((-1,1))
+        Y = np.dot(mat,Y)
+    return Y
+    
