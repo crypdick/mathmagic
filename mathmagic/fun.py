@@ -412,10 +412,14 @@ def mat_prod(mat_list):
         array([[  1.,  33.],
                [ 10.,  30.]])
     """
+
+    # Convert all 1-D arrays to column vector
+    for mat_idx,mat in enumerate(mat_list):
+        if len(mat.shape) == 1:
+            mat_list[mat_idx] = mat.reshape((-1,1))
+            
     Y = np.eye(mat_list[-1].shape[1])
     for mat in mat_list[::-1]:
-        if len(mat.shape) == 1:
-            mat = mat.reshape((-1,1))
         Y = np.dot(mat,Y)
     return Y
     
