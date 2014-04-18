@@ -53,7 +53,7 @@ def mvnpdf(x,mu,K):
     K_inv = np.linalg.inv(K)
     
     # Subtract mean from x
-    x_n = x - mu
+    x_n = x - mu.squeeze()
     # Calculate stuff in exponential
     in_exp = -.5*(np.sum(x_n.T*np.dot(K_inv,x_n.T),0))
     # Calculate the normalization constant
