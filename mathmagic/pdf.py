@@ -19,6 +19,49 @@ import numpy as np
 
 import mathmagic.fun as mmf
 
+def mvnpdf(x,mu,K):
+    """Multivariate normal probability density.
+    
+    Args:
+        x: Vector or array of vectors.
+        
+        mu: Mean of distribution.
+        
+        K: Covariance of distribution.
+        
+    Returns:
+        Array of multivariate probability densities, one for each row of x.
+    
+    Example:
+        >>> mu = np.array([1,1])
+        >>> K = np.array([[1,.5],[.5,2]])
+        >>> x = np.array([0,0])
+        >>> mvnpdf(x,mu,K)
+        0.067941140344700182
+        >>> x = np.array([[0,0],[1,3]])
+        >>> mvnpdf(x,mu,K)
+        array([ 0.06794114,  0.03836759])
+    """
+    
+    num_x = x.shape
+    
+    if num_x == 1:
+        x = x.reshape((1,x.shape[0]))
+    
+    dim = x.shape[0]
+    
+    K_inv = np.linalg.inv(K)
+    
+    # Subtract mean from x
+    x_n = x - mu
+    # Calculate stuff in exponential
+    in_exp = -.5*(np.sum(x_n.T*np.dot(K_inv,x_n.T),0))
+    # Calculate the normalization constant
+    norm_const = (((2*np.pi)**dim)*np.abs(np.linalg.det(K)))**.5
+    
+    return np.exp(in_exp)/norm_const
+    
+
 def logmvnpdf(x, mu, K, logdetK=None, opt1='standard'):
     """Calculate the log multivariate normal probability density at x.
     
