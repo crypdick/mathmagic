@@ -43,12 +43,13 @@ def mvnpdf(x,mu,K):
         array([ 0.06794114,  0.03836759])
     """
     
-    num_x = x.shape
-    
-    if num_x == 1:
+    if len(x.shape) == 1:
+        is_vec = True
         x = x.reshape((1,x.shape[0]))
+    else:
+        is_vec = False
     
-    dim = x.shape[0]
+    dim = x.shape[1]
     
     K_inv = np.linalg.inv(K)
     
@@ -59,8 +60,10 @@ def mvnpdf(x,mu,K):
     # Calculate the normalization constant
     norm_const = (((2*np.pi)**dim)*np.abs(np.linalg.det(K)))**.5
     
-    return np.exp(in_exp)/norm_const
-    
+    if is_vec:
+        return (np.exp(in_exp)/norm_const)[0]
+    else:
+        return np.exp(in_exp)/norm_const
 
 def logmvnpdf(x, mu, K, logdetK=None, opt1='standard'):
     """Calculate the log multivariate normal probability density at x.

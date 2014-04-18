@@ -103,11 +103,11 @@ class Space():
             array([[ 1.,  1.]])
         """
         
-        dX = self.X - pos[0]
-        dY = self.Y - pos[1]
+        dX = (self.X - pos[0]).astype(float)
+        dY = (self.Y - pos[1]).astype(float)
         
         if self.dim == 2:
-            mask = dX**2 + dY**2 <= rad**2
+            mask = (dX**2 + dY**2) <= rad**2
         elif self.dim == 3:
             dZ = self.Z - pos[2]
             mask = dX**2 + dY**2 + dZ**2 <= rad**2
@@ -272,4 +272,4 @@ class ParArray():
             idx = np.array([np.argmin(np.abs(pos[ii] - self.X[ii])) \
                 for ii in range(self.D)]).astype(int)
             
-        self.Y[idx] = val
+        self.Y[tuple(idx)] = val
