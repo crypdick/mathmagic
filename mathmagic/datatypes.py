@@ -39,7 +39,7 @@ class Space():
                 edges[2]:edges[3],edges[4]:edges[5]]
             self.sparse = [np.arange(edges[0],edges[1],step),
                            np.arange(edges[2],edges[3],step),
-                           np.arange(edges[3],edges[4],step)]
+                           np.arange(edges[4],edges[5],step)]
         # Store format as mgrid
         self.format = 'mgrid'
         # Store shape

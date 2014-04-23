@@ -359,13 +359,14 @@ def symtri(x,center=0,height=1,slope=1):
     elif x <= x_right and x >= center:
         return (x_right - x)*slope
         
-def cartesian_product(x,y=None):
+def cartesian_product(x,*args):
     """Return Cartesian product of two 1D arrays.
     
     Args:
         x: One array.
         
-        y: The other array. Leave as blank to use x twice.
+        args: Other arrays. If none provided, cartesian product of x and x
+        will be returned.
         
     Returns:
         Cartesian product of x and y.
@@ -384,9 +385,14 @@ def cartesian_product(x,y=None):
                [3, 6],
                [5, 6]])
     """
-    if y is None:
-        y = x.copy()
-    return np.dstack(np.meshgrid(x,y)).reshape(-1,2)
+    if args:
+        args = [x] + list(args)
+    else:
+        args = [x,x]
+        
+    A = np.meshgrid(*args)
+    A = [A[ii].reshape(-1,1) for ii in range(len(A))]
+    return np.concatenate(A,1)
     
 def mat_prod(mat_list):
     """Calculate the product of several matrices.
