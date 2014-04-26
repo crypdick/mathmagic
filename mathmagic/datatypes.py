@@ -57,7 +57,7 @@ class Space():
             idx_set: Whether or not to return just index.
             
         Returns:
-            Position rounded to nearest point in space.
+            Position rounded to nearest point in space (tuple).
         """
         
         # Get index nearest to pos
@@ -138,7 +138,24 @@ class Space():
                 return np.array([x,y,z]).T
             else:
                 return np.concatenate([x,y,z]).reshape((3,-1)).T
-                
+    
+    def get_bdry(self):
+        """Return a dictionary of boundaries.
+        
+        Returns:
+            2D array of boundaries. Rows are dimensions. First column is lower
+            boundary, second column is upper boundary.
+        """
+        
+        if self.dim == 2:
+            bdry = np.array([[self.sparse[0][0],self.sparse[0][-1]],
+                             [self.sparse[1][0],self.sparse[1][-1]]])
+        elif self.dim == 3:
+            bdry = np.array([[self.sparse[0][0],self.sparse[0][-1]],
+                             [self.sparse[1][0],self.sparse[1][-1]],
+                             [self.sparse[2][0],self.sparse[2][-1]]]) 
+        return bdry
+        
     def gen_idx_mgrid(self):
         """Generate meshgrids of indices."""
         
