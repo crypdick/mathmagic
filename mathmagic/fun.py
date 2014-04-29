@@ -1,8 +1,8 @@
-#!/anaconda/bin/python
-
+import pdb
 """
-Modified Jan 31 2013
-Modified Jan 7 2013
+Modified Apr 29 2014
+Modified Jan 31 2014
+Modified Jan 7 2014
 Modified Dec 11 2013
 
 Created Nov 29 2013
@@ -15,7 +15,7 @@ random number generators and special plotting functions.
 
 # Import numpy
 import numpy as np
-import pdb
+from scipy import interpolate
 
 def mwfun(func, *args):
     """Performs a function operation matrix-wise on numpy ndarray objects
@@ -479,3 +479,74 @@ def psd(t_series,n=None):
     
     # Calculate psd by taking mean
     return np.mean(np.array(ps),axis=0)
+    
+def func_dist_uneven(x1,y1,x2,y2,p=2.,d=10):
+    """Return the LP distance between two functions that are defined over 
+    different supports.
+    
+    x1 and x2 must be strictly increasing. All function values are assumed to
+    be zero outside of the region of their provided support.
+    
+    Args:
+        x1: Support of first function.
+        
+        y1: Values of first function.
+        
+        x2: Support of second function.
+        
+        y2: Values of second function.
+        
+        p: Which LP norm to use.
+        
+        d: Resolution parameter. The dx used in calculating the distance will be
+        the minimum dx in either x1 or x2 divided by d.
+        
+    Returns:
+        Distance between two functions.
+        
+    Example:
+        >>> x1 = np.linspace(0,10,30)
+        >>> x2 = np.linspace(0,10,100)
+        >>> y1 = 4*np.sin(x1)
+        >>> y2 = 2*np.cos(x2)
+        >>> func_dist_uneven(x1,y1,x2,y2)
+        9.441791672756592
+    """
+    
+    # Get dx (minimum x window divided by d)
+    dx = np.min(np.concatenate([np.diff(x1),np.diff(x2)])) / d
+    # Get xmin and xmax
+    xmin = np.min(np.concatenate([x1,x2]))
+    xmax = np.max(np.concatenate([x1,x2]))
+    
+    x1c = x1.copy()
+    x2c = x2.copy()
+    y1c = y1.copy()
+    y2c = y2.copy()
+    
+    if xmin < np.min(x1c):
+        x1c = np.concatenate([np.array([xmin]),x1c])
+        y1c = np.concatenate([np.array([0.]),y1c])
+    if xmin < np.min(x2c):
+        x2c = np.concatenate([np.array([xmin]),x2c])
+        y2c = np.concatenate([np.array([0.]),y2c])
+    if xmax > np.max(x1c):
+        x1c = np.concatenate([x1c,np.array([xmax])])
+        y1c = np.concatenate([y1c,np.array([0.])])
+    if xmax > np.max(x2c):
+        x2c = np.concatenate([x2c,np.array([xmax])])
+        y2c = np.concatenate([y2c,np.array([0.])])
+
+    # Generate new support
+    x = np.arange(xmin,xmax,dx)
+    
+    # Build interpolated functions
+    f1 = interpolate.interp1d(x1c,y1c)
+    f2 = interpolate.interp1d(x2c,y2c)
+    
+    # Calculate new y values of each function using interpolater
+    y1_int = f1(x)
+    y2_int = f2(x)
+        
+    # Calculate distance
+    return (np.sum((y1_int - y2_int)**p)*dx)**(1./p)
