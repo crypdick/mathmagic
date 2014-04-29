@@ -102,10 +102,13 @@ def statdist(tr_mat):
     Example:
         >>> tr_mat = np.array([[.3, .4, .3],[.2, .7, .1],[.1, .1, .8]])
         >>> statdist(tr_mat)
-        array([])
+        array([ 0.17241379,  0.37931034,  0.44827586])
     """
+    tr_copy = tr_mat.copy()
+    # Set any rows of Nans to equal probabilities
+    tr_copy[np.isnan(tr_mat)] = 1./tr_copy.shape[0]
     # Calculate left eigenvectors and eigenvalues of transition matrix
-    evs,evecs = np.linalg.eig(tr_mat.transpose())
+    evs,evecs = np.linalg.eig(tr_copy.transpose())
     # Get eigenvector with eigenvalue 1
     statdistvec = evecs[:,np.argmin(np.abs(evs-1))]
     # Normalize stationary distribution and remove any spurious imaginary part
