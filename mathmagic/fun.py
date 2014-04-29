@@ -431,4 +431,51 @@ def mat_prod(mat_list):
     for mat in mat_list[::-1]:
         Y = np.dot(mat,Y)
     return Y
+
+def psd(t_series,n=None):
+    """Approximate the power spectral density (PSD) of a list of time-series.
     
+    The PSD is approximated by calculating the power spectrum of each time-
+    series and averaging them together.
+    
+    Args:
+        t_series: List of time-series. If vector time-series, each must be a 
+        numpy array with rows indicating times and columns indicating 
+        variables.
+        
+        n: Number of points in psd. Standard conventions of zero-padding and
+        truncation are used.
+        
+    Returns:
+        Power spectral density for each dimension in each time-series
+        
+    Example:
+        >>> t = np.arange(0,10,.1)
+        >>> t_series = [(3+np.random.normal(0,1,1))*sin(3*t) + \
+                        (5+np.random.normal(0,1,1))*sin(5*t) \
+                        for ii in range(100)]
+        >>> t_series = [np.tile(X,(2,1)).T for X in t_series]
+        >>> t_series = [X + np.random.normal(0,.2,X.shape) for X in t_series]
+        >>> plt.figure()
+        >>> for ii in range(100):
+        ...     plt.plot(t_series[ii])
+        >>> p_spec_dens = psd(t_series)
+        >>> plt.figure()
+        >>> plt.plot(p_spec_dens)
+    """
+    
+    if n is None:
+        n = max([X.shape[0] for X in t_series])
+        
+    # Convert all time-series to two-dim arrays
+    if len(t_series[0].shape) == 1:
+        t_series = [np.array([X]).T for X in t_series]
+        
+    # Calculate DFT of each time-series
+    dft = [np.fft.fft(X,n=n,axis=0) for X in t_series]
+    
+    # Calculate power spectrum
+    ps = [FT*np.conj(FT) for FT in dft]
+    
+    # Calculate psd by taking mean
+    return np.mean(np.array(ps),axis=0)
