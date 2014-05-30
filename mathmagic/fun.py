@@ -676,3 +676,22 @@ def dkl(P1,P2,dx=1.,sym=False):
         return (dkl1 + dkl2)/2.
     else:
         return dkl1
+        
+def ks_stat(P1,P2,dx=1.):
+    """Calculate the Kolmogorov-Smirnov statistic for two distributions.
+    
+    Args:
+        P1: First distribution.
+        P2: Second distribution.
+        dx: Integration interval for continuous distributions.
+    
+    Returns:
+        KS statistic for P1 and P2.
+    """
+    
+    # Calculate cumulative distributions
+    C1 = np.cumsum(P1)*dx
+    C2 = np.cumsum(P2)*dx
+    
+    # Find maximum distance between cumulative distributions
+    return np.max(np.abs(C2-C1))
