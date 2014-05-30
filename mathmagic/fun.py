@@ -249,23 +249,22 @@ def pos_inv(x):
     return y
     
 def entropy(P):
-    """ Calculate the entropy of a discrete probability distribution.
+    """Calculate the entropy of a discrete probability distribution.
     
     Args:
         P: Array of probabilities. Arbitrary dimensionality accepted.
-    
     Returns:
         Entropy of distribution.
         
     Example:
-        >>> P1 = np.array([.2,.2,.2,.2])
+        >>> P1 = np.array([.25,.25,.25,.25])
         >>> P2 = np.array([.1,.1,.4,.4])
         >>> entropy(P1)
         1.3862943611198906
         >>> entropy(P2)
         1.1935496040981333
-        
     """
+    
     # Reshape distribution into 1D array
     P = P.reshape((P.size,)).astype(float)
     # Normalize distribution
@@ -279,6 +278,41 @@ def entropy(P):
     ent = -np.sum(P_log_P)
     
     return ent
+    
+def var_discrete(P):
+    """Calculate the variance of a discrete probability distribution.
+    
+    The variance of a multidimensional probability distribution is the trace of
+    the covariance matrix. All intervals between points are assumed to be unity
+    i.e., dx = dy = ... = 1
+    
+    Args:
+        P: Array of probabilities. Arbitrary dimensionality accepted.
+    Returns:
+        Variance of distribution.
+    
+    Example:
+        >>> P1 = np.array([.2,.2,.2,.2,.2])
+        >>> var_discrete(P1)
+        2.0
+    """
+    
+    # Make sure probability distribution is normalized
+    P_norm = P.astype(float) / np.sum(P)
+    # Create meshgrids
+    if len(P_norm.shape) > 1:
+        M = np.meshgrid(*[np.arange(0,n) for n in P_norm.shape])
+    else:
+        M = [np.arange(0,P_norm.shape[0])]
+    # Calculate variance along each dimension and sum
+    V = 0.
+    for d in range(len(P_norm.shape)):
+        # Get mean
+        mu = np.sum(P_norm*M[d])
+        # Get variance
+        V += np.sum(P_norm*(M[d] - mu)**2)
+    
+    return V
 
 def prob_from_log_like(log_like):
     """ Calculate probability from log_likelihoods, assuming flat prior.
@@ -550,3 +584,95 @@ def func_dist_uneven(x1,y1,x2,y2,p=2.,d=10):
         
     # Calculate distance
     return (np.sum((y1_int - y2_int)**p)*dx)**(1./p)
+    
+def cdiff(a, axis=0):
+    """Calculate the central differences of vectors in a along a given axis.
+    
+    Args:
+        a: Array.
+        axis: Which axis to calculate central differences along.
+    Returns:
+        Array of central differences, taken along specified axis.
+    Example:
+        >>> x = np.arange(40).reshape(10,4)
+        >>> cdiff(x,0)
+        array([[ 4.,  4.,  4.,  4.],
+               [ 4.,  4.,  4.,  4.],
+               [ 4.,  4.,  4.,  4.],
+               [ 4.,  4.,  4.,  4.],
+               [ 4.,  4.,  4.,  4.],
+               [ 4.,  4.,  4.,  4.],
+               [ 4.,  4.,  4.,  4.],
+               [ 4.,  4.,  4.,  4.],
+               [ 4.,  4.,  4.,  4.],
+               [ 4.,  4.,  4.,  4.]])
+        >>> cdiff(x,1)
+        array([[ 1.,  1.,  1.,  1.],
+               [ 1.,  1.,  1.,  1.],
+               [ 1.,  1.,  1.,  1.],
+               [ 1.,  1.,  1.,  1.],
+               [ 1.,  1.,  1.,  1.],
+               [ 1.,  1.,  1.,  1.],
+               [ 1.,  1.,  1.,  1.],
+               [ 1.,  1.,  1.,  1.],
+               [ 1.,  1.,  1.,  1.],
+               [ 1.,  1.,  1.,  1.]])        
+        
+    """
+    
+    diff_array = np.diff(a,n=1,axis=axis).astype(float)
+    append_shape = list(a.shape)
+    append_shape[axis] = 1
+    append_array = nans(append_shape)
+    
+    # Take average of forwards and backwards differences
+    f_diff = np.concatenate([diff_array,append_array],axis)
+    b_diff = np.concatenate([append_array,diff_array],axis)
+    f_nan_mask = np.isnan(f_diff)
+    b_nan_mask = np.isnan(b_diff)
+    f_diff[f_nan_mask] = b_diff[f_nan_mask]
+    b_diff[b_nan_mask] = f_diff[b_nan_mask]
+    
+    return (f_diff + b_diff)/2.
+    
+def edges(x):
+    """Calculate edges of groups of nonzero elements in a 1D array.
+    
+    Args:
+        x: Array.
+    Returns:
+        2D array of edges. First column is lower edge, second column is upper
+        edge.
+    Example:
+        >>> x = np.array([0,0,0,1,1.5,2,1.5,1,0,0,0,-2,-2.5,-2.3,0,0])
+        array([[3,8],
+               [11,14]])
+    """
+    
+    new_x = np.concatenate([np.array([0]),(x != 0).astype(int),np.array([0])])
+    d = np.diff(new_x)
+    lower = (d == 1).ravel().nonzero()[0]
+    upper = (d == -1).ravel().nonzero()[0]
+    return np.array([lower,upper]).T
+    
+def dkl(P1,P2,dx=1.,sym=False):
+    """Calculate the Kullback-Leibler divergence (DKL) between two 
+    distributions with the same domain.
+    
+    Args:
+        P1: First distribution.
+        P2: Second distribution.
+        dx: Integration interval for continuous distributions.
+        sym: Set to True to get symmetric DKL
+        
+    Returns:
+        DKL between the two distributions.
+    """
+    
+    dkl1 = np.sum(np.log(P1/P2)*P1)*dx
+    
+    if sym:
+        dkl2 = np.sum(np.log(P2/P1)*P2)*dx
+        return (dkl1 + dkl2)/2.
+    else:
+        return dkl1
