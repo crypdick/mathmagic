@@ -695,3 +695,35 @@ def ks_stat(P1,P2,dx=1.):
     
     # Find maximum distance between cumulative distributions
     return np.max(np.abs(C2-C1))
+    
+def peaks(x):
+    """Find the peaks of the vector array x.
+    
+    Args:
+        x: 1D array.
+    
+    Returns:
+        Logical indices of peaks, values of peaks.
+        
+    Example:
+        >>> x = np.array([0,2,3,4,2,2,-1,-2,-1,2,5,8,4,3,5,1])
+        >>> idx, pks = peaks(x)
+        >>> idx
+        array([False, False, False,  True, False, False, False, False, False,
+               False, False,  True, False, False,  True, False], dtype=bool)
+        >>> pks
+        array([4, 8, 5])
+    """
+    
+    # Calculate derivative
+    dx = np.diff(x)
+    # Binarize derivative
+    dx[dx > 0] = 1.
+    dx[dx <= 0] = 0.
+    # Get second derivative
+    d2x = np.concatenate([np.array([0.]),np.diff(dx),np.array([0.])])
+    # Find indices of peaks
+    idx = (d2x == -1.)
+    pks = x[idx]
+    
+    return idx,pks

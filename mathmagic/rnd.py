@@ -177,7 +177,19 @@ def ONmatrnd(dim=3):
     # Return q, which is orthonormal, and uniformly distributed.
     return q
     
-def mnrnd(mean_mat,left_cov,right_cov):
-    """Samples from a matrix normal distribution
+def mvnrnd(mu=np.array([0.,0]),K=np.array([[1.,0],[0,1]]),n=1):
+    """Sample from a multivariate normal distribution.
     
+    Args:
+        mu: Mean vector.
+        K: Covariance matrix. Must be positive semidefinite.
+        n: Number of samples to return.
     """
+    
+    dim = len(mu)
+    samples_uncor = np.random.normal(0,1,(dim,n))
+    cov_sqrt = np.linalg.cholesky(K)
+    samples_cor = cov_sqrt.dot(samples_uncor)
+    samples_cor = (samples_cor.T + mu).T
+    
+    return np.squeeze(samples_cor)
