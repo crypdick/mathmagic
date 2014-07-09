@@ -249,7 +249,10 @@ def pos_inv(x):
     return y
     
 def entropy(P):
-    """Calculate the entropy of a discrete probability distribution.
+    """Calculate the entropy of a probability distribution.
+    
+    If the probability distribution is not normalized, this function will 
+    assume that it is actually a probability density.
     
     Args:
         P: Array of probabilities. Arbitrary dimensionality accepted.
@@ -259,23 +262,27 @@ def entropy(P):
     Example:
         >>> P1 = np.array([.25,.25,.25,.25])
         >>> P2 = np.array([.1,.1,.4,.4])
+        >>> P3 = .25*np.ones((100,))
         >>> entropy(P1)
         1.3862943611198906
         >>> entropy(P2)
         1.1935496040981333
+        >>> entropy(P3)
+        1.3862943611198919
     """
     
     # Reshape distribution into 1D array
     P = P.reshape((P.size,)).astype(float)
-    # Normalize distribution
-    P /= np.sum(P)
+    P_sum = np.sum(P)
+    # Calculate differential width
+    dx = 1./P_sum
     # Calculate probability times log probability
     P_log_P = np.zeros(P.shape)
     P_log_P[P != 0] = P[P != 0]*np.log(P[P != 0])
     # Set nans/infs to 0
     P_log_P[np.isnan(P_log_P) + np.isinf(P_log_P)] = 0.
     # Calculate entropy
-    ent = -np.sum(P_log_P)
+    ent = -np.sum(P_log_P)*dx
     
     return ent
     

@@ -72,3 +72,11 @@ def heat_scatter_3D(ax,X,num_pts=500):
     
     return ax
     
+def scatter_subsample(ax,x,y,n,*args,**kwargs):
+    """Make a scatter plot of x vs. y by randomly subsampling n data points."""
+    
+    idx = np.random.random_integers(0,len(x)-1,n)
+    x_sub = x.take(idx)
+    y_sub = y.take(idx)
+    
+    return ax.scatter(x_sub,y_sub,*args,**kwargs)
