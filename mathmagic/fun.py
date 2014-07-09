@@ -747,12 +747,37 @@ def nanmax(x,*args,**kwargs):
     Example:
         >>> nanmax(np.array([1,3,6,1]))
         6
+        >>> nanmax(np.array([[1,3,6,1],[1,7,3,4]]),1)
+        array([6, 7])
         >>> nanmax(np.array([]))
         nan
     """
     
     if x.size:
         return np.max(x,*args,**kwargs)
+    else:
+        return np.nan
+
+def nanmin(x,*args,**kwargs):
+    """Return the minimum of an array or nan if the array is empty.
+    
+    Args:
+        x: Array (possibly empty)
+        
+    Returns:
+        Max of array or nan if array is empty.
+        
+    Example:
+        >>> nanmin(np.array([1,3,6,1]))
+        1
+        >>> nanmin(np.array([[1,3,6,1],[1,7,3,4]]),1)
+        array([1,1])
+        >>> nanmin(np.array([]))
+        nan
+    """
+    
+    if x.size:
+        return np.min(x,*args,**kwargs)
     else:
         return np.nan
     
