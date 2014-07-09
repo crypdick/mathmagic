@@ -21,7 +21,7 @@ def ang_vel(vel,dt=1.):
     """
     dt = float(dt)
     # Calculate normalized velocity vector
-    v = ((vel**2).sum(1)**.5)[:,None]
+    v = vel/((vel**2).sum(1)**.5)[:,None]
     # Calculate angle between each consecutive pair of normalized velocity 
     # vectors
     dtheta = np.arccos((v[:-1,:]*v[1:,:]).sum(1))

@@ -734,3 +734,25 @@ def peaks(x):
     pks = x[idx]
     
     return idx,pks
+    
+def nanmax(x,*args,**kwargs):
+    """Return the maximum of an array or nan if the array is empty.
+    
+    Args:
+        x: Array (possibly empty)
+        
+    Returns:
+        Max of array or nan if array is empty.
+        
+    Example:
+        >>> nanmax(np.array([1,3,6,1]))
+        6
+        >>> nanmax(np.array([]))
+        nan
+    """
+    
+    if x.size:
+        return np.max(x,*args,**kwargs)
+    else:
+        return np.nan
+    
