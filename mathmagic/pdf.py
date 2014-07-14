@@ -130,11 +130,11 @@ def logmvnpdf(x, mu, K, logdetK=None, opt1='standard'):
     
     # If K is one-dimensional, just calculate normpdf of all samples
     if K.size == 1:
-        if isinstance(mu,int) or isinstance(mu,float):
-            mu = np.array([mu])
-        if isinstance(K,int) or isinstance(K,float):
-            K = np.array([K])
-        return np.log(stats.norm.pdf(x,mu.item(0),K.item(0)))
+        if not (isinstance(mu,int) or isinstance(mu,float)):
+            mu = mu.item(0)
+        if not (isinstance(K,int) or isinstance(K,float)):
+            K = K.item(0)
+        return -.5*np.log(2*np.pi*K) - .5*((x-mu)**2)/K
         
     # Remove extraneous dimension from x and mu
     x = np.squeeze(x)
