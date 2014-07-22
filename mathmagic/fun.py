@@ -781,3 +781,58 @@ def nanmin(x,*args,**kwargs):
     else:
         return np.nan
     
+def fit_nonlinearity(x,y,approx='piecewise_linear',bins=10,equal_inputs=True):
+    """Fit an arbitrary nonlinearity to a dataset.
+    
+    Fit dataset with a nonlinear curve.
+    
+    Args:
+        x: x-coordinates of data
+        y: y-coordinates of data
+        approx: which approximation to use to define nonlinearity. Options: 
+            'piecewise_linear',...
+        bins: how many bins to use in approximating the nonlinearity
+        equal_inputs: Whether or not to use an equal number of inputs in each 
+        bin.
+    Returns:
+        continuous function defined over domain of x.
+    Example:
+        >>> x = np.arange(0,5,.01)
+        >>> y = np.exp(x) + np.random.normal(0,1,x.shape)
+        >>> plt.scatter(x,y)
+        >>> f = fit_nonlinearity(x,y,bins=10)
+        >>> plt.plot(x,f(x))
+    """
+    
+    # Sort x and y according to x
+    sort_idx = x.argsort()
+    xs = x[sort_idx]
+    ys = y[sort_idx]
+    
+    per_bin = np.ceil(len(xs)/bins)
+    bin_means = nans((bins,))
+    bin_cents = nans((bins,))
+    for bin_idx in range(bins):
+        bin_start = bin_idx*per_bin
+        bin_end = (bin_idx+1)*per_bin
+        x_bin = xs[bin_start:bin_end]
+        y_bin = ys[bin_start:bin_end]
+        bin_cents[bin_idx] = x_bin.mean()
+        bin_means[bin_idx] = y_bin.mean()
+
+    bin_cents[0] = min(x)
+    bin_cents[-1] = max(x)
+    # Create nonlinear function        
+    def f(z_array):
+        out_array = nans(z_array.shape)
+        for z_idx,z in enumerate(z_array):
+            for bin_idx in range(bins-1):
+                if bin_cents[bin_idx] <= z <= bin_cents[bin_idx+1]:
+                    dy = bin_means[bin_idx+1] - bin_means[bin_idx]
+                    dx = bin_cents[bin_idx+1] - bin_cents[bin_idx]
+                    slope = dy/dx
+                    intercept = bin_means[bin_idx] - slope*bin_cents[bin_idx]
+                    out_array[z_idx] = slope*z + intercept
+        return out_array
+    
+    return f
