@@ -16,6 +16,7 @@ random number generators and special plotting functions.
 # Import numpy
 import numpy as np
 from scipy import interpolate
+import scipy.stats as stats
 
 def mwfun(func, *args):
     """Performs a function operation matrix-wise on numpy ndarray objects
@@ -798,10 +799,10 @@ def fit_nonlinearity(x,y,approx='piecewise_linear',bins=10,equal_inputs=True):
         continuous function defined over domain of x.
     Example:
         >>> x = np.arange(0,5,.01)
-        >>> y = np.exp(x) + np.random.normal(0,1,x.shape)
+        >>> y = np.exp(x) + np.random.normal(0,2,x.shape)
         >>> plt.scatter(x,y)
         >>> f = fit_nonlinearity(x,y,bins=10)
-        >>> plt.plot(x,f(x))
+        >>> plt.plot(x,f(x),'r',linewidth=2)
     """
     
     # Sort x and y according to x
@@ -812,6 +813,8 @@ def fit_nonlinearity(x,y,approx='piecewise_linear',bins=10,equal_inputs=True):
     per_bin = np.ceil(len(xs)/bins)
     bin_means = nans((bins,))
     bin_cents = nans((bins,))
+    slopes = nans((bins,))
+    intercepts = nans((bins,))
     for bin_idx in range(bins):
         bin_start = bin_idx*per_bin
         bin_end = (bin_idx+1)*per_bin
@@ -819,6 +822,9 @@ def fit_nonlinearity(x,y,approx='piecewise_linear',bins=10,equal_inputs=True):
         y_bin = ys[bin_start:bin_end]
         bin_cents[bin_idx] = x_bin.mean()
         bin_means[bin_idx] = y_bin.mean()
+        slope, intercept, r_value, p_value, std_err = stats.linregress(x_bin,y_bin)
+        slopes[bin_idx] = slope
+        intercepts[bin_idx] = intercept
 
     bin_cents[0] = min(x)
     bin_cents[-1] = max(x)
@@ -828,10 +834,13 @@ def fit_nonlinearity(x,y,approx='piecewise_linear',bins=10,equal_inputs=True):
         for z_idx,z in enumerate(z_array):
             for bin_idx in range(bins-1):
                 if bin_cents[bin_idx] <= z <= bin_cents[bin_idx+1]:
-                    dy = bin_means[bin_idx+1] - bin_means[bin_idx]
-                    dx = bin_cents[bin_idx+1] - bin_cents[bin_idx]
-                    slope = dy/dx
-                    intercept = bin_means[bin_idx] - slope*bin_cents[bin_idx]
+#                    dy = bin_means[bin_idx+1] - bin_means[bin_idx]
+#                    dx = bin_cents[bin_idx+1] - bin_cents[bin_idx]
+#                    slope = dy/dx
+#                    intercept = bin_means[bin_idx] - slope*bin_cents[bin_idx]
+                
+                    slope = slopes[bin_idx]
+                    intercept = intercepts[bin_idx]
                     out_array[z_idx] = slope*z + intercept
         return out_array
     
