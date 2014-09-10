@@ -41,3 +41,29 @@ def ang_vel(vel,dt=1.):
     a_vel_full[1:-1] /= 2.
     
     return a_vel_full
+    
+def heading(vel,up_dir=np.array([-1.,0,0]),in_deg=True):
+    """Get headings from velocities.
+    
+    Args:
+        vel: Velocity array.
+        up_dir: Unit vector pointing upwind.
+        in_deg: Whether or not to return headings in degrees.
+    Returns:
+        1D array of headings."""
+    # Get normalized velocities
+    norm_vel = vel / np.sqrt((vel ** 2).sum(1))[...,np.newaxis]
+    # Get headings
+    heading = np.arccos(norm_vel.dot(up_dir))
+    
+    if in_deg:
+        heading *= 180./np.pi
+        
+    return heading
+    
+def speed(vel):
+    """Get speed from velocity.
+    Args:
+        vel: Velocity array (rows are time steps)
+    """
+    return np.sqrt((vel**2).sum(axis=1))
