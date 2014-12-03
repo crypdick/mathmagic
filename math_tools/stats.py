@@ -35,6 +35,7 @@ class dhist():
     
     def __init__(self, bins=10):
         self.bins = bins
+        self.bin_centers = None
         self.count = 0
         self.mean = None
         
@@ -48,6 +49,9 @@ class dhist():
             self.mean = np.mean(data)
             # Compute counts & bins
             self.cts, self.bins = np.histogram(data, self.bins)
+            # Get bin center & width
+            self.bin_centers = .5 * (self.bins[:-1] + self.bins[1:])
+            self.bin_width = self.bins[1] - self.bins[0]
             
         # If subsequent dataset
         else:

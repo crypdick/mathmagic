@@ -9,6 +9,7 @@ This module provides a set of physics-related functions.
 
 # Import numpy
 import numpy as np
+from fun import cdiff
 
 def ang_vel(vel,dt=1.):
     """Calculate angular velocity time-series.
@@ -41,6 +42,19 @@ def ang_vel(vel,dt=1.):
     a_vel_full[1:-1] /= 2.
     
     return a_vel_full
+    
+def acc(vel,dt=1.):
+    """Calculate acceleration time-series.
+    
+    Args:
+        vel: 3-D velocity time-series. Rows are time points.
+    
+    Returns:
+        Acceleration time-series.
+    """
+    dt = float(dt)
+
+    return cdiff(vel) / dt
     
 def heading(vel,up_dir=np.array([-1.,0,0]),in_deg=True):
     """Get headings from velocities.
