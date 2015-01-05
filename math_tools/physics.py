@@ -57,7 +57,7 @@ def acc(vel,dt=1.):
     return cdiff(vel) / dt
     
 def heading(vel,up_dir=np.array([-1.,0,0]),in_deg=True):
-    """Get headings from velocities.
+    """Get headings (with respect to upwind direction) from velocities.
     
     Args:
         vel: Velocity array.
