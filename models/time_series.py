@@ -1,4 +1,3 @@
-import pdb
 """
 Created on Tue Sep  9 22:21:40 2014
 
@@ -9,8 +8,6 @@ Code for GLM, ARMA models
 
 import numpy as np
 from numpy import concatenate as cc
-from scipy.signal import fftconvolve
-import matplotlib.pyplot as plt
 import statsmodels.api as sm
 
 from math_tools.matrix import sliding_window as swm
