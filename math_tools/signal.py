@@ -8,6 +8,15 @@ Contains some basic signal processing functions not found in scipy.
 
 import numpy as np
 from scipy.signal import fftconvolve
+import matplotlib.pyplot as plt
+
+# TEST SIGNALS
+T = np.arange(300)
+X = (np.random.uniform(0, 1, 300) > .95).astype(float)
+HT = np.arange(-20, 20)
+H = np.exp(-HT/7.)
+H[H > 1] = 0
+Y = np.convolve(X, H, mode='same')
 
 def fftxcorr(x, y, dt=1.):
     """Calculate the cross correlation between two signals using fft.
@@ -47,3 +56,11 @@ def fftxcorr(x, y, dt=1.):
     xy /= tri_norm
     
     return t, xy
+    
+def test_fftxcorr():
+    fig, axs = plt.subplots(3, 1)
+    axs[0].plot(T, X)
+    axs[1].plot(T, Y)
+    
+    TC, XY = fftxcorr(X, Y)
+    axs[2].plot(TC, XY)

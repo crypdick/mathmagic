@@ -69,7 +69,6 @@ class dhist():
         
         # Compute normalized counts
         self.normed_cts = self.cts / float(self.count)
-        
 
 def DKL(P,Q,symmetric=True):
     """Compute the Kullback-Liebler divergence between two probability
