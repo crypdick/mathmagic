@@ -11,7 +11,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 import numpy as np
 
-import mathmagic.rnd as rnd
+import rnd
 
 def heat_scatter_3D(ax,X,num_pts=500):
     """Create a 3D heat map using sparsely scattered points.
@@ -80,3 +80,10 @@ def scatter_subsample(ax,x,y,n,*args,**kwargs):
     y_sub = y.take(idx)
     
     return ax.scatter(x_sub,y_sub,*args,**kwargs)
+
+def set_fontsize(ax, fontsize):
+    """Set fontsize of all axis text objects to specified value."""
+    
+    for txt in ([ax.title, ax.xaxis.label, ax.yaxis.label] + 
+                ax.get_xticklabels() + ax.get_yticklabels()):
+        txt.set_fontsize(fontsize)
